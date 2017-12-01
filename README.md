@@ -7,5 +7,7 @@ Process:
 The program reads in tables of schools to compare, creates lists of those removing the words "Elementary", "Middle", "High", "School", selects schools by city and compares the truncated names. If a school from our list does not match a school from the OSPI list, our list gets a row of NaN added, if it does match, the OSPI school's school code, name, and city are added. 
 
 Data Sources:
-The list of private schools was obtained from http://www.k12.wa.us/PrivateEd/PrivateSchools/ 
-The list of public schools was obtatined from https://eds.ospi.k12.wa.us/DirectoryEDS.aspx 
+Washington_School_Directory_20171201.csv - File as downloaded from OSPI at http://www.k12.wa.us/PrivateEd/PrivateSchools/ 
+Washington_School_Directory_20171201csv.csv - converted to a csv by exporting from excel to remove some formatting issues
+ApprovedPrivateSchoolsList.xlsx - File as downloaded from OSPI at https://eds.ospi.k12.wa.us/DirectoryEDS.aspx 
+ApprovedPrivateSchoolsListcsv.csv - deleted first three rows and convert to a csv by exporting from excel
