@@ -10,11 +10,11 @@ The program reads in tables of schools to compare, creates lists of those removi
 
 ## Data Sources
 
-Washington_School_Directory_20171201.csv - File as downloaded from OSPI at http://www.k12.wa.us/PrivateEd/PrivateSchools/ 
-Washington_School_Directory_20171201csv.csv - converted to a csv by exporting from excel to remove some formatting issues
-ApprovedPrivateSchoolsList.xlsx - File as downloaded from OSPI at https://eds.ospi.k12.wa.us/DirectoryEDS.aspx 
-ApprovedPrivateSchoolsListcsv.csv - deleted first three rows and convert to a csv by exporting from excel
-RSSchoolList.csv - The list of schools in the Rainier Scholars database. While I'll not be uploading it, it is a table with the following columns and sample values: 
+- Washington_School_Directory_20171201.csv - File as downloaded from OSPI at http://www.k12.wa.us/PrivateEd/PrivateSchools/ 
+- Washington_School_Directory_20171201csv.csv - converted to a csv by exporting from excel to remove some formatting issues
+- ApprovedPrivateSchoolsList.xlsx - File as downloaded from OSPI at https://eds.ospi.k12.wa.us/DirectoryEDS.aspx 
+- ApprovedPrivateSchoolsListcsv.csv - deleted first three rows and convert to a csv by exporting from excel
+- RSSchoolList.csv - The list of schools in the Rainier Scholars database. While I'll not be uploading it, it is a table with the following columns and sample values: 
 ```
 Name: American Elementary School
 NameShort: American ES
