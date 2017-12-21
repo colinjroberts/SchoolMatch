@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+"""
+Created on Wed Dec 20 12:44:45 2017
+
+@author: croberts
+"""
+
+# -*- coding: utf-8 -*-
 
 # Read in csv of RS school list and create pandas dataframe
 # Read in csv list of OSPI list and create pandas dataframe
@@ -13,78 +20,103 @@
 import pandas as pd
 import numpy as np
 
+
+def clean_title(text):
+    """
+    Takes a pandas series of strings, and returns a pandas series of strings
+    that have been stripped and each word capitalized
+    """
+    text = text.str.lower()
+    text = text.str.title()
+    text = text.str.strip()
+    return text
+
+
+def string_truncate(strings_to_truncate, words_to_remove, truncated_list_name):
+    """
+    Takes a list of strings to modify, a list of words to remove from the first list,
+    and an empty list that will be populated with with the new truncated strings.
+    """
+    truncated_list_name = []
+    for string in strings_to_truncate:
+        modifying_string = string
+        for word in words_to_remove:
+            modifying_string = modifying_string.replace(word, "")
+            modifying_string = modifying_string.strip()
+        truncated_list_name.append(modifying_string)  
+    return truncated_list_name
+
+
+
+#read in all csvs and create relevant dataframes
 OSPI_df = pd.read_csv('Washington_School_Directory_20171121.csv')
 OSPI_Ind_df = pd.read_csv('ApprovedPrivateSchoolsList.csv')
+OSPI_Ind_df.dropna(how='all', axis=1, inplace=True)
+OSPI_Ind_df.dropna(how='all', axis=0, inplace=True)
+
 
 RS_df_pre = pd.read_csv('RSSchoolList2.csv', usecols=[0,1,2,3,4])
-RS_df_NotPub = RS_df_pre[RS_df_pre.Type != "Public"]
-RS_df = RS_df_pre[RS_df_pre.Type == "Public"]
+RS_df_NotPub = RS_df_pre[RS_df_pre.Type != "Public"].copy()
+RS_df = RS_df_pre[RS_df_pre.Type == "Public"].copy()
 
 
 
-RSSchoolList = RS_df.Name.tolist()
-RSSchoolListStrip = []
-RSSchoolListBones = []
+#clean all of the city names as they are obviously variable among sources
+OSPI_df.City = clean_title(OSPI_df.City) 
+OSPI_Ind_df.City = clean_title(OSPI_Ind_df.City)
 
-RSIndSchoolList = RS_df_NotPub.Name.tolist()
-RSIndSchoolListStrip = []
-RSIndSchoolListBones = []
-
-RelevantOSPISchoolsBones = []
-RelevantOSPIIndSchoolsBones = []
-removablewords = ["Elementary", "Middle", "High", "School"]
+RS_df.City = clean_title(RS_df.City)
+RS_df_NotPub.City = clean_title(RS_df_NotPub.City)
 
 
-#for z in RSSchoolList:
-#    y = str.strip(z)
-#    RSSchoolListStrip.append(y)
-#RSSchoolList = RSSchoolListStrip
 
-for z in RSSchoolList:
-    modWA = z
-    for w in removablewords:
-        modWA = modWA.replace(w, "")
-        modWA = modWA.strip()
-    RSSchoolListBones.append(modWA)
-    
-for z in RSIndSchoolList:
-    modWA = z
-    for w in removablewords:
-        modWA = modWA.replace(w, "")
-        modWA = modWA.strip()
-    RSIndSchoolListBones.append(modWA)    
-
-#Create a new dataframe to hold OSPI school info
+#Initialize empty variables to be used later
+RSSchoolListTruncated = []
+RSIndSchoolListTruncated = []
+OSPITruncatedSchools = []
+OSPIIndTruncatedSchools = []
+RelevantOSPISchoolsTruncated = []
+RelevantOSPIIndSchoolsTruncated = []
 OSPIcode = []
 OSPIname = []
 OSPIcity = []
-
 OSPIIndcode = []
 OSPIIndname = []
 OSPIIndcity = []
 
+
+
+#initialize vairbales of names
+RSSchoolList = RS_df.Name.tolist()
+RSIndSchoolList = RS_df_NotPub.Name.tolist()
+OSPISchoolList = OSPI_df.SchoolName.tolist()
+OSPIIndSchoolList = OSPI_Ind_df.SchoolName.tolist()
+
+removablewords = ["Elementary", "Middle", "High", "School"]
+
+RSSchoolListTruncated = string_truncate(RSSchoolList,removablewords,RSSchoolListTruncated)  
+RSIndSchoolListTruncated = string_truncate(RSIndSchoolList,removablewords,RSIndSchoolListTruncated)
+OSPITruncatedSchools = string_truncate(OSPISchoolList,removablewords, OSPITruncatedSchools)
+OSPIIndTruncatedSchools = string_truncate(OSPIIndSchoolList,removablewords, OSPIIndTruncatedSchools)
+
+OSPITruncatedSchools = pd.Series(OSPITruncatedSchools)
+OSPI_df['TruncName'] = OSPITruncatedSchools
+OSPIIndTruncatedSchools = pd.Series(OSPIIndTruncatedSchools)
+OSPI_Ind_df['TruncName'] = OSPIIndTruncatedSchools
+
+
+
 ### PUBLIC ###
-for RSindex, school in enumerate(RSSchoolListBones):
-    RS_df.City = RS_df.City.str.upper()
-    RS_df.City = RS_df.City.str.strip()
-    getcity = RS_df.iloc[RSindex,2]
-    bestschoolsofarcounter = 0
-    bestschoolsofar = np.nan
-    RelevantOSPISchoolsLiST = []
-    OSPI_df.City = OSPI_df.City.str.upper()
+for RSidx, school in enumerate(RSSchoolListTruncated):
+    getcity = RS_df.iloc[RSidx,2]
+    RelevantOSPISchoolsList = []
     RelevantOSPISchools = OSPI_df[OSPI_df.City == getcity] 
     RelevantOSPISchoolsList = RelevantOSPISchools.SchoolName.tolist()
+    RelevantOSPISchoolsTruncated = RelevantOSPISchools.TruncName.tolist()
     
-    #Remove the words from OSPI
-    RelevantOSPISchoolsBones = []
-    for z in RelevantOSPISchoolsList:
-        modOSPI = z
-        for w in removablewords:
-            modOSPI = modOSPI.replace(w, "")
-            modOSPI = modOSPI.strip()
-        RelevantOSPISchoolsBones.append(modOSPI)
-
-    for OSPIindex, item in enumerate(RelevantOSPISchoolsBones):
+    bestschoolsofar = np.nan
+    
+    for OSPIindex, item in enumerate(RelevantOSPISchoolsTruncated):
         if school == item:
             bestschoolsofar = 0
             bestschoolsofar = OSPIindex
@@ -109,28 +141,19 @@ print(RS_df.tail(10))
 print(OSPI_df_fin.tail(10))    
 bothschools_pub_df = pd.concat([RS_df, OSPI_df_fin], axis=1)            
         
+
+
+
 ### NOT PUBLIC ###
-for RSindex, school in enumerate(RSIndSchoolListBones):
-    RS_df_NotPub.City = RS_df_NotPub.City.str.upper()
-    RS_df_NotPub.City = RS_df_NotPub.City.str.strip()    
+for RSindex, school in enumerate(RSIndSchoolListTruncated):
     getcity = RS_df_NotPub.iloc[RSindex,2]
-    bestschoolsofarcounter = 0
-    bestschoolsofar = np.nan
-    RelevantOSPIIndSchoolsLiST = []
-    OSPI_Ind_df.City = OSPI_Ind_df.City.str.upper()
+    RelevantOSPIIndSchoolsList = []
     RelevantOSPIIndSchools = OSPI_Ind_df[OSPI_Ind_df.City == getcity] 
     RelevantOSPIIndSchoolsList = RelevantOSPIIndSchools.SchoolName.tolist()
+    RelevantOSPIIndSchoolsTruncated = RelevantOSPIIndSchools.TruncName.tolist()
+    bestschoolsofar = np.nan
     
-    #Remove the words from OSPI
-    RelevantOSPIIndSchoolsBones = []
-    for z in RelevantOSPIIndSchoolsList:
-        modOSPI = z
-        for w in removablewords:
-            modOSPI = modOSPI.replace(w, "")
-            modOSPI = modOSPI.strip()
-        RelevantOSPIIndSchoolsBones.append(modOSPI)
-
-    for OSPIindex, item in enumerate(RelevantOSPIIndSchoolsBones):
+    for OSPIindex, item in enumerate(RelevantOSPIIndSchoolsTruncated):
         if school == item:
             bestschoolsofar = 0
             bestschoolsofar = OSPIindex
@@ -150,15 +173,14 @@ OSPI_Ind_df_fin = pd.DataFrame({"OSPI School Code": OSPIIndcode,
 
 RS_df_NotPub.reset_index(drop=True, inplace=True)
 OSPI_Ind_df_fin.reset_index(drop=True, inplace=True)
+  
 
-#print(RS_df_NotPub.tail(10))
-#print(OSPI_df_fin.tail(10))    
+#Join public and private
 bothschoolsInd_df = pd.concat([RS_df_NotPub, OSPI_Ind_df_fin], axis=1)
-
 bothschools_df = pd.concat([bothschools_pub_df, bothschoolsInd_df], axis=0)
 
-#print parts of the dataframe to check
 print(bothschools_pub_df.head(10))
 print(bothschoolsInd_df.head(10))
 print(bothschools_df.head(10))
+
 bothschools_df.to_csv('both_schools.csv')
