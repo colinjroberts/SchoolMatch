@@ -148,9 +148,9 @@ all_pub_unmatched_df = all_pub_matched_df[all_pub_matched_df["OSPI City"].isnull
 ### NOT PUBLIC ###
 for rs_idx, school in enumerate(rs_ind_list_trunc):
     getcity = rs_ind_df.iloc[rs_idx,2]
-    ospi_indl_list_bycity = []
+    ospi_ind_list_bycity = []
     ospi_ind_df_bycity = ospi_raw_ind_df[ospi_raw_ind_df.City == getcity] 
-    ospi_indl_list_bycity = ospi_ind_df_bycity.SchoolName.tolist()
+    ospi_ind_list_bycity = ospi_ind_df_bycity.SchoolName.tolist()
     ospi_ind_list_bycity_trunc = ospi_ind_df_bycity.TruncName.tolist()
     best_school_so_far = np.nan
     
