@@ -141,9 +141,8 @@ rs_pub_df.reset_index(drop=True, inplace=True)
 ospi_pub_matched_df.reset_index(drop=True, inplace=True)
 
 all_pub_matched_df = pd.concat([rs_pub_df, ospi_pub_matched_df], axis=1)
-all_pub_matched_df = all_pub_matched_df[all_pub_matched_df["OSPI City"].notnull()]
 all_pub_unmatched_df = all_pub_matched_df[all_pub_matched_df["OSPI City"].isnull()]
-
+all_pub_matched_df = all_pub_matched_df[all_pub_matched_df["OSPI City"].notnull()]
 
 
 ### NOT PUBLIC ###
@@ -178,8 +177,8 @@ rs_ind_df.reset_index(drop=True, inplace=True)
 ospi_ind_matched_df.reset_index(drop=True, inplace=True)
 
 all_ind_matched_df = pd.concat([rs_ind_df, ospi_ind_matched_df], axis=1)
-all_ind_matched_df = all_ind_matched_df[all_ind_matched_df["OSPI City"].notnull()]
 all_ind_unmatched_df = all_ind_matched_df[all_ind_matched_df["OSPI City"].isnull()]
+all_ind_matched_df = all_ind_matched_df[all_ind_matched_df["OSPI City"].notnull()]
 
 #Join public and private schools
 all_matched_df = pd.concat([all_pub_matched_df, all_ind_matched_df], axis=0)
