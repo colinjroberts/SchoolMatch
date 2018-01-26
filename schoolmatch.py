@@ -7,16 +7,6 @@ Created on Wed Dec 20 12:44:45 2017
 
 # -*- coding: utf-8 -*-
 
-# Read in csv of RS school list and create pandas dataframe
-# Read in csv list of OSPI list and create pandas dataframe
-
-# For each school on our list 
-#   Find all of the schools in the same city
-#   Compare words of each school name
-#       Not including school words if 0 escape
-#       Including school words, find closest match
-#       Add the OSPI school name and the OSPI school code to the copy
-
 import pandas as pd
 import numpy as np
 
@@ -105,14 +95,11 @@ def school_match(school_type, output_type, rs_df, ospi_df):
         print("output_type must be a string, either 'matched' or 'unmatched'.")
 
 
-
-
 #read in all csvs and create relevant dataframes
 ospi_raw_pub_df = pd.read_csv('Washington_School_Directory_20171201.csv')
 ospi_raw_ind_df = pd.read_csv('ApprovedPrivateSchoolsList.csv')
 ospi_raw_ind_df.dropna(how='all', axis=1, inplace=True)
 ospi_raw_ind_df.dropna(how='all', axis=0, inplace=True)
-
 
 rs_raw_df = pd.read_csv('RSSchoolList3.csv', usecols=[0,1,2,3,4])
 rs_ind_df = rs_raw_df[rs_raw_df.Type != "Public"].copy()
